@@ -4,14 +4,13 @@ import com.flyer.model.WordFrequency;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
 public class CounterService {
 
-    public Queue getWordFrequency(String text){
+    public PriorityQueue<WordFrequency> getWordFrequency(String text){
         //if text is null, empty or has just white spaces, we do not have anything to count
         if(text == null || text.trim().length() == 0) return null;
 

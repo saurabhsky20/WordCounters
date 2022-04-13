@@ -4,8 +4,7 @@ import com.flyer.model.WordFrequency;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.PriorityQueue;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -18,7 +17,7 @@ public class CounterServiceTest {
     public void test_when_text_is_null(){
 
         CounterService cs = new CounterService();
-        Queue q = cs.getWordFrequency(null);
+        PriorityQueue<WordFrequency> q = cs.getWordFrequency(null);
         assertNull(q);
     }
 
@@ -28,7 +27,7 @@ public class CounterServiceTest {
 
         CounterService cs = new CounterService();
         //when text is empty
-        Queue q = cs.getWordFrequency("");
+        PriorityQueue<WordFrequency> q = cs.getWordFrequency("");
         assertNull(q);
 
         //when text is empty
@@ -42,11 +41,30 @@ public class CounterServiceTest {
 
         CounterService cs = new CounterService();
         //when text is empty
-        Queue<WordFrequency> q = cs.getWordFrequency("this is is some something that is this");
+        PriorityQueue<WordFrequency> q = cs.getWordFrequency("this is is some something that is this");
         assertNotNull(q);
         WordFrequency wf = q.poll();
         while(!q.isEmpty()){
             WordFrequency temp = q.poll();
+            //asserting that the previous word prequency is greater than the current one
+            assertTrue(temp.getFrequency()<= wf.getFrequency());
+            wf = temp;
+        }
+    }
+
+    @Test
+    @DisplayName("valid text with alphabets and more than 1 space between words should return descending frequency ordered queue")
+    public void test_when_text_is_valid_with_more_then_one_space_between_words(){
+
+        CounterService cs = new CounterService();
+        //when text is empty
+        PriorityQueue<WordFrequency> q = cs.getWordFrequency("this is    is   some something that is this");
+        assertNotNull(q);
+        WordFrequency wf = q.poll();
+        assertTrue(!wf.getWord().isEmpty());
+        while(!q.isEmpty()){
+            WordFrequency temp = q.poll();
+            assertTrue(!temp.getWord().isEmpty());
             //asserting that the previous word prequency is greater than the current one
             assertTrue(temp.getFrequency()<= wf.getFrequency());
             wf = temp;
@@ -59,7 +77,7 @@ public class CounterServiceTest {
 
         CounterService cs = new CounterService();
         //when text is empty
-        Queue<WordFrequency> q = cs.getWordFrequency("this ## is is ## some. something that is this");
+        PriorityQueue<WordFrequency> q = cs.getWordFrequency("this ## is is ## some. something that is this");
         assertNotNull(q);
         WordFrequency wf = q.poll();
         assertTrue(!wf.getWord().contains("##"));
@@ -68,8 +86,8 @@ public class CounterServiceTest {
         while(!q.isEmpty()){
             WordFrequency temp = q.poll();
             //asserting the special character words are not part of the word list
-            assertTrue(!wf.getWord().contains("##"));
-            assertTrue(!wf.getWord().contains("some."));
+            assertTrue(!temp.getWord().contains("##"));
+            assertTrue(!temp.getWord().contains("some."));
             //asserting that the previous word prequency is greater than the current one
             assertTrue(temp.getFrequency()<= wf.getFrequency());
             wf = temp;
